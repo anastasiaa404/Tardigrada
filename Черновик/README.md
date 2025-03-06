@@ -5,6 +5,21 @@
 
 ## 1. Скачали все и риды:
 - /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova
+```
+AL5_24_fastqc_out                           F350035857_L01_CAP1-1-EN41_2.fq.gz
+DNBSEQ-G400_PE300_2024-12-25_Nasonova.xlsx  F350035857_L01_CAP1-2-EN42_1.fq.gz
+F350035857_L01_AL15.24-5-EN272_1.fq.gz      F350035857_L01_CAP1-2-EN42_2.fq.gz
+F350035857_L01_AL15.24-5-EN272_2.fq.gz      F350035857_L01_OOM3-4-EN47_1.fq.gz
+F350035857_L01_API1-4-EN43_1.fq.gz          F350035857_L01_OOM3-4-EN47_2.fq.gz
+F350035857_L01_API1-4-EN43_2.fq.gz          F350035857_L01_OOM3-6-EN48_1.fq.gz
+F350035857_L01_API1-6-EN44_1.fq.gz          F350035857_L01_OOM3-6-EN48_2.fq.gz
+F350035857_L01_API1-6-EN44_2.fq.gz          F350035857_L02_AL5.24_2-EN270_1.fq.gz
+F350035857_L01_API2-6-EN45_1.fq.gz          F350035857_L02_AL5.24_2-EN270_2.fq.gz
+F350035857_L01_API2-6-EN45_2.fq.gz          F350035857_L02_AL8.24_3-EN271_1.fq.gz
+F350035857_L01_API2-8-EN46_1.fq.gz          F350035857_L02_AL8.24_3-EN271_2.fq.gz
+F350035857_L01_API2-8-EN46_2.fq.gz          F350035857_L02_NKA_1-EN269_1.fq.gz
+F350035857_L01_CAP1-1-EN41_1.fq.gz          F350035857_L02_NKA_1-EN269_2.fq.gz
+```
 ## 2. Запускаем Кракена на ридах, 
 начнем пока только с OOM3 (один образец, две реакции MDA), либо с API1 и API2 (два образца, в каждом по две реакции).
 ```
