@@ -7,7 +7,10 @@
 - /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova
 ## 2. Запускаем Кракена на ридах, 
 начнем пока только с OOM3 (один образец, две реакции MDA), либо с API1 и API2 (два образца, в каждом по две реакции).
-  получаем: 
+```
+kraken2 --db /media/eternus1/nfs/projects/databases/kraken2_db/ --threads 8 --paired ~/tardigrada/F350035857_L01_OOM3-6-EN48_1.fq.gz ~/tardigrada/F350035857_L01_OOM3-6-EN48_2.fq.gz --report ~/tardigrada/OOM3-6-EN48_report.txt --output ~/tardigrada/OOM3-6-EN48_classified.txt
+```
+- получаем: 
    ![Снимок экрана 2025-02-26 234304](https://github.com/user-attachments/assets/570cfc3d-7f68-4b34-a885-3220e78a9969)
 (база данных кракена на сервер: /media/eternus1/nfs/projects/databases/kraken2_db/ )
 ## 3. Дальнейший план действий:
