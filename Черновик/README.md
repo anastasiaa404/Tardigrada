@@ -28,6 +28,17 @@ kraken2 --db /media/eternus1/nfs/projects/databases/kraken2_db/ --threads 8 --pa
 - получаем: 
    ![Снимок экрана 2025-02-26 234304](https://github.com/user-attachments/assets/570cfc3d-7f68-4b34-a885-3220e78a9969)
 (база данных кракена на сервер: /media/eternus1/nfs/projects/databases/kraken2_db/ )
+
+## 2.2. Визиализация Кракена
+- скачиваем результаты и смотрим их на сайте: https://fbreitwieser.shinyapps.io/pavian/
+```
+scp -i ~/.ssh/id_rsa aanferova@77.234.216.99:/media/eternus1/nfs/projects/users/aanferova/tardigrada/AL15.24-5-EN272_report.txt /home/anastassia/itmo/tardigrada/AL15.24-5-EN272_report.txt
+```
+- ![Снимок экрана 2025-03-11 164512](https://github.com/user-attachments/assets/b4001ff5-7b0b-4ade-bd00-1ef4617e1ac6)
+- ![Снимок экрана 2025-03-11 164715](https://github.com/user-attachments/assets/ea696819-d5e8-45a0-a2a6-675331dbb74d) ![Снимок экрана 2025-03-11 164749](https://github.com/user-attachments/assets/2e38a464-1e12-481d-854e-7ae07170a780)
+
+
+
 ## 3. Дальнейший план действий:
     1. Сделать сборку
     2. Сделать биннинг
