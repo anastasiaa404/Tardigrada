@@ -51,6 +51,41 @@ spades.py   -1 F350035857_L01_OOM3-6-EN48_1.fq.gz -2 F350035857_L01_OOM3-6-EN48_
  nohup spades.py   -1 F350035857_L01_OOM3-6-EN48_1.fq.gz -2 F350035857_L01_OOM3-6-EN48_2.fq.gz   --pe1-1 F350035857_L01_OOM3-4-EN47_1.fq.gz --pe1-2 F350035857_L01_OOM3-4-EN47_2.fq.gz   -o spades_output   -t 40 > spades.log 2>&1 &
 ```
 
+- Запускаем спейдес, на следующих образца: API1 и API2, используем screen/
+```
+mkdir -p /media/eternus1/nfs/projects/users/aanferova/tardigrada/spades_API1
+
+screen -S spades_api1
+
+spades.py \
+-1 /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/F350035857_L01_API1-4-EN43_1.fq.gz \
+-2 /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/F350035857_L01_API1-4-EN43_2.fq.gz \
+--pe1-1 /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/F350035857_L01_API1-6-EN44_1.fq.gz \
+--pe1-2 /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/F350035857_L01_API1-6-EN44_2.fq.gz \
+-o /media/eternus1/nfs/projects/users/aanferova/tardigrada/spades_API1 \
+-t 16
+```
+- API2:
+```
+mkdir -p /media/eternus1/nfs/projects/users/aanferova/tardigrada/spades_API2
+
+screen -S spades_api2
+
+spades.py \
+-1 /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/F350035857_L01_API2-6-EN45_1.fq.gz \
+-2 /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/F350035857_L01_API2-6-EN45_2.fq.gz \
+--pe1-1 /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/F350035857_L01_API2-8-EN46_1.fq.gz \
+--pe1-2 /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/F350035857_L01_API2-8-EN46_2.fq.gz \
+-o /media/eternus1/nfs/projects/users/aanferova/tardigrada/spades_API2 \
+-t 16
+```
+## 4.2 barrnap
+- В результатах сборки достать 16S:
+
+```
+barrnap  scaffolds.fasta   --outseq rrna.fasta
+```
+
 ## 5. QUAST:
 ```
 quast.py -o quast_output contigs.fasta
