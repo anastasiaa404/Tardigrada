@@ -90,6 +90,20 @@ spades.py \
 -o /media/eternus1/nfs/projects/users/aanferova/tardigrada/spades_API2 \
 -t 16
 ```
+### 4.1.2. Запускаем trimmidat и перезапускаем спейдес:
+- Меняли только пути 
+-  ```spades.py \
+-1 /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/trimmed/OOM3-4-EN47/paired_1.fq.gz \
+-2 /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/trimmed/OOM3-4-EN47/paired_2.fq.gz \
+--pe1-s /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/trimmed/OOM3-4-EN47/unpaired_1.fq.gz \
+--pe1-s /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/trimmed/OOM3-4-EN47/unpaired_2.fq.gz \
+--pe2-1 /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/trimmed/OOM3-6-EN48/paired_1.fq.gz \
+--pe2-2 /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/trimmed/OOM3-6-EN48/paired_2.fq.gz \
+--pe2-s /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/trimmed/OOM3-6-EN48/unpaired_1.fq.gz \
+--pe2-s /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/trimmed/OOM3-6-EN48/unpaired_2.fq.gz \
+-o /mnt/projects/aanferova/tardigrada/spades_OOM \
+-t 20
+```
 ## 4.2 barrnap
 - В результатах сборки достать 16S:
 
