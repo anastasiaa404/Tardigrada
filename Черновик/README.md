@@ -92,7 +92,8 @@ spades.py \
 ```
 ### 4.1.2. Запускаем trimmidat и перезапускаем спейдес:
 - Меняли только пути 
--  ```spades.py \
+```
+   spades.py \
 -1 /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/trimmed/OOM3-4-EN47/paired_1.fq.gz \
 -2 /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/trimmed/OOM3-4-EN47/paired_2.fq.gz \
 --pe1-s /media/eternus1/nfs/projects/users/mrayko/microsporidia_reads/jan_25/2024-12-25-DNBSEQ-PE300-Nasonova/trimmed/OOM3-4-EN47/unpaired_1.fq.gz \
@@ -111,27 +112,78 @@ spades.py \
 barrnap  scaffolds.fasta   --outseq rrna.fasta
 ```
 
-## 5. QUAST:
+## 5.Запускали срипт Миши, буско и биннинг (maxbin)
+
+## 6. Строим деревья:
+1. Что конкретно надо сделать пошагово:
+2. Пробежать barrnap по всем файлам maxbin_real.00*.fasta, чтобы вытащить 18S рРНК.
+3.  Посмотреть, что нашлось — может быть, у некоторых бинов будет 18S, у некоторых нет.
+4. Собрать найденные 18S в один fasta-файл.
+5. Сделать BLAST этих последовательностей против базы nt или silva, чтобы понять, кто это.
+6. (Опционально) Построить филогенетическое дерево через IQ-TREE.
+
+### 6.1. Достаем 18S:
 ```
-quast.py -o quast_output contigs.fasta
+# Создадим папку для результатов
+mkdir barrnap_results
+
+# Для каждого бина запустить barrnap
+for bin in maxbin_real.00*.fasta; do
+    barrnap --kingdom euk --outseq barrnap_results/${bin%.fasta}_18S.fasta $bin > barrnap_results/${bin%.fasta}_18S.gff
+done
+
+cat barrnap_results/*_18S.fasta > all_bins_18S.fasta
 ```
-- Результаты QUAST:
- ![Снимок экрана 2025-03-06 172814](https://github.com/user-attachments/assets/3701732a-d9a8-4d9a-a750-a99dc1f04e81)
+- В файле все рРНК, поэтому вырежем, чтобы оставить только 18S:
+```
+# Создадим отдельный файл только с 18S
+grep -A 1 "18S" /media/eternus1/nfs/projects/users/aanferova/tardigrada/all_bins_18S.fasta | grep -v "^--$" > /media/eternus1/nfs/projects/users/aanferova/tardigrada/all_bins_only18S.fasta
+```
+### 6.2 BLAST:
+- установка через конду, а также скачаем базу Silva/
+```
+# Переходим в папку для баз
+cd /media/eternus1/nfs/projects/users/aanferova/tardigrada/
 
-### Оценка качества сборки
+# Скачиваем fasta файл с малыми субъединицами рРНК
+wget https://ftp.arb-silva.de/release_138.1/Exports/SILVA_138.1_SSURef_NR99_tax_silva.fasta.gz
 
-1. **Полнота сборки**:
-   - Общая длина сборки (≈ 103 Мб) и N50 (70 kbp) указывают на то, что сборка достаточно полная, особенно если ты работаешь с геномом эукариот (например, тихоходки).
-   - Однако наличие большого количества мелких контигов (20173 контигов ≥ 0 bp) говорит о некоторой фрагментированности.
+# Разархивируем
+gunzip SILVA_138.1_SSURef_NR99_tax_silva.fasta.gz
 
-2. **Качество сборки**:
-   - N50 в 70 kbp — это хороший результат, но его можно улучшить, особенно если ты работаешь с крупным геномом.
-   - Самый длинный контиг (787 kbp) — это отличный показатель, который говорит о том, что SPAdes смог собрать крупные участки генома.
 
-3. **Фрагментированность**:
-   - Наличие 20173 контигов указывает на то, что сборка может быть фрагментированной. Это может быть связано с:
-     - Ограничениями данных (например, короткие риды).
-     - Сложностью генома (например, повторяющиеся участки).
+# Строим базу для blastn
+makeblastdb -in SILVA_138.1_SSURef_NR99_tax_silva.fasta -dbtype nucl -out SILVA_SSU
 
-## 6.BUSCO:
+
+blastn -query /media/eternus1/nfs/projects/users/aanferova/tardigrada/all_bins_only18S.fasta \
+       -db /media/eternus1/nfs/projects/users/aanferova/tardigrada/SILVA_SSU \
+       -out /media/eternus1/nfs/projects/users/aanferova/tardigrada/18S_vs_SILVA.out \
+       -outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore stitle" \
+       -max_target_seqs 5 \
+       -evalue 1e-10
+```
+- всё нужное у меня получилось:
+
+1. 18S_vs_SILVA.out — результат BLAST'а ✅
+2. SILVA_138.1_SSURef_NR99_tax_silva.fasta — скачанный референс ✅
+3. SILVA_SSU.nhr / nin / nsq — файлы базы BLAST ✅
+4. all_bins_only18S.fasta — твои последовательности 18S ✅
+
+- **Короткий анализ:**
+Последовательность | Ближайший родич | Комментарий
+NODE_746 | (очень высокое % id) | Скорее всего тихоходка ✅
+NODE_1780 | (тоже высокое % id) | Возможно тихоходка ✅
+NODE_1778 | (чуть ниже %) | Может быть паразит (Apicomplexa) ❓
+NODE_4348 | (очень хорошее %) | Похоже на тихоходку ✅
+NODE_2328 | (низкое покрытие) | Возможно паразит ❓
+NODE_1167 | (высокий % id) | Скорее всего тихоходка ✅
+NODE_3395 | (высокий % id) | Скорее всего тихоходка ✅
+
+### 6.3: Дерево
+- Кого взять для дерева:
+Группа | Кого взять
+Тихоходки | Hypsibius, Ramazzottius, Milnesium + твои узлы
+Паразит | Несколько Gregarina spp. + кто-то из Apicomplexa
+Outgroup | C. elegans или дрожжи
 
