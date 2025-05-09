@@ -140,35 +140,7 @@ cat barrnap_results/*_18S.fasta > all_bins_18S.fasta
 grep -A 1 "18S" /media/eternus1/nfs/projects/users/aanferova/tardigrada/all_bins_18S.fasta | grep -v "^--$" > /media/eternus1/nfs/projects/users/aanferova/tardigrada/all_bins_only18S.fasta
 ```
 ### 6.2 BLAST:
-- установка через конду, а также скачаем базу Silva/
-```
-# Переходим в папку для баз
-cd /media/eternus1/nfs/projects/users/aanferova/tardigrada/
-
-# Скачиваем fasta файл с малыми субъединицами рРНК
-wget https://ftp.arb-silva.de/release_138.1/Exports/SILVA_138.1_SSURef_NR99_tax_silva.fasta.gz
-
-# Разархивируем
-gunzip SILVA_138.1_SSURef_NR99_tax_silva.fasta.gz
-
-
-# Строим базу для blastn
-makeblastdb -in SILVA_138.1_SSURef_NR99_tax_silva.fasta -dbtype nucl -out SILVA_SSU
-
-
-blastn -query /media/eternus1/nfs/projects/users/aanferova/tardigrada/all_bins_only18S.fasta \
-       -db /media/eternus1/nfs/projects/users/aanferova/tardigrada/SILVA_SSU \
-       -out /media/eternus1/nfs/projects/users/aanferova/tardigrada/18S_vs_SILVA.out \
-       -outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore stitle" \
-       -max_target_seqs 5 \
-       -evalue 1e-10
-```
-- всё нужное у меня получилось:
-
-1. 18S_vs_SILVA.out — результат BLAST'а 
-2. SILVA_138.1_SSURef_NR99_tax_silva.fasta — скачанный референс 
-3. SILVA_SSU.nhr / nin / nsq — файлы базы BLAST 
-4. all_bins_only18S.fasta — твои последовательности 18S 
+- используем BLAST NCBI Nucleutide, загружали по отдельности каждый бин и скачивали по 3 ближайших последовательности к нашему бину
 
 - **Короткий анализ:**
 Последовательность | Ближайший родич | Комментарий
@@ -178,29 +150,17 @@ NODE_1778 | (чуть ниже %) | Может быть паразит (Apicompl
 NODE_4348 | (очень хорошее %) | Похоже на тихоходку 
 NODE_2328 | (низкое покрытие) | Возможно паразит 
 NODE_1167 | (высокий % id) | Скорее всего тихоходка 
-NODE_3395 | (высокий % id) | Скорее всего тихоходка 
+NODE_3395 | (высокий % id) | Скорее всего тихоходка
+- это только для реакции OOM а потом еще для API1 и API2
 
 ### 6.3: Дерево
-- Кого взять для дерева:
-   1. Берём первую 18S из all_bins_only18S.fasta.
-   2. Кидаем её на NCBI BLASTn:
-      - https://blast.ncbi.nlm.nih.gov/Blast.cgi
-      - Настроить поиск: "Database: nt", "Program Selection: highly similar sequences (megablast)".
-   3. Получаем список ближайших последовательностей.
-   4. Выбираем 1–3 лучших:
-      - Если это тихоходки → скачиваем.
-      - Если апикомплексы → тоже скачиваем.
-   5. Повторяем для всех своих бинов.
-1. 18S_rRNA::NODE_746_length_31914_cov_59.335735:9465-10331(-) - близка бактериям OY970254.1 OY730416.1 OP420511.1 
-2. 18S_rRNA::NODE_1780_length_7136_cov_1914.637466:1648-3462(+) - тихоходка PQ069999.1 PQ070000.1 PQ069998.1 EF620403.1 FJ435722.1 FJ435722.1
-3. 18S_rRNA::NODE_1778_length_7165_cov_21.306479:859-1739(+) - бактерии AB195161.1 	EF599312.1 HG916765.1 
-4. 18S_rRNA::NODE_4348_length_1501_cov_2.440320:1-1306(+) - оомицеты KT257318.1 KT257317.1 EF024131.1
-5. 18S_rRNA::NODE_2328_length_4126_cov_6.697924:190-978(-) - микроспоридия OK155994.1 	KX214678.1 PP057783.1 	PP057784.1
-6. 18S_rRNA::NODE_1167_length_16491_cov_13.179602:13949-14838(+) - бактерия OZ032159.1 	OZ183485.1 OQ099633.1
-7. 18S_rRNA::NODE_3395_length_2150_cov_3.992534:826-1704(-) - бактерии CP137757.1 	OP809571.1 CP069792.1 CP001620.1 
-8. 18S_rRNA::NODE_2328_length_4126_cov_6.697924:1013-1563(-) - микроспоридия KX214678.1 	KX214677.1 KX214676.1 MW344837.1  
-9. 18S_rRNA::NODE_1167_length_16491_cov_13.179602:13391-13899(+) - бактерия OZ032159.1 	JX257195.1 OZ034917.1 *AF322442.1*
-   
+- использовали для постоения IQTREE, и для визуализации ITol
+   ![KViCej-MjqXxauJRhtByZg-_1_](https://github.com/user-attachments/assets/93818ae8-c33a-483c-81b6-d2b37a4de33c)
 
+Обозначения цветом:
+- красный: бактериальные геномы
+- синий:  микроспоридии (паразитические грибоподобные организмы)
+- желтый: грибы (в том числе Oomycota) 
+- фиолетовый: представители Apicomplexa
+- зеленый: последовательности Tardigrada
 
-   
