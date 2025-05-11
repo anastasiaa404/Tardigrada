@@ -205,3 +205,10 @@ done
 mkdir ../orthologs_ready
 mv *.fasta ../orthologs_ready/
 ```
+- 
+| Шаг             | Инструмент            |
+| --------------- | --------------------- |
+| Поиск ортологов | BUSCO                 |
+| Выравнивание    | MAFFT                 |
+| Конкатенация    | AMAS / FASconCAT-G    |
+| Филогения       | IQ-TREE               |
