@@ -164,3 +164,44 @@ NODE_3395 | (высокий % id) | Скорее всего тихоходка
 - фиолетовый: представители Apicomplexa
 - зеленый: последовательности Tardigrada
 
+#### 6.3.2. Дерево по ортологам
+- запустить буско на всех бинах
+- начнем с **аминокислотных (белковых) последовательностей**
+- копируем все ортологи в одну папку:
+```
+mkdir -p /mnt/projects/aanferova/tardigrada/tardigrada_busco_aa
+
+# Копируем аминокислотные последовательности из всех BUSCO-папок в целевую директорию
+for dir in /media/eternus1/nfs/projects/users/mrayko/microsporidia/OOM/maxbin2/busco_metaeuk_maxbin_real.00*_eukaryota; do
+    if compgen -G "$dir/run_eukaryota_odb10/busco_sequences/single_copy_busco_sequences/*.faa" > /dev/null; then
+        cp "$dir"/run_eukaryota_odb10/busco_sequences/single_copy_busco_sequences/*.faa /mnt/projects/aanferova/tardigrada/tardigrada_busco_aa/
+    else
+        echo "Нет .faa файлов в: $dir"
+    fi
+done
+```
+- Шаг 1: Создать подкаталоги по каждому BUSCO ID
+Это поможет нам собрать все последовательности одного и того же ортолога вместе:
+```
+cd /mnt/projects/aanferova/tardigrada/tardigrada_busco_aa
+
+# Создать директории для каждого уникального BUSCO ID
+for f in *.faa; do
+    id="${f%%.faa}"
+    mkdir -p "orthologs/$id"
+    cp "$f" "orthologs/$id/"
+done
+```
+Шаг 2: Объединить все последовательности по каждому ортологу
+```
+cd orthologs
+
+for dir in */; do
+    cat "$dir"/*.faa > "${dir%/}.fasta"
+done
+```
+Шаг 3: Перенести все .fasta-файлы в отдельную директорию для выравнивания
+```
+mkdir ../orthologs_ready
+mv *.fasta ../orthologs_ready/
+```
