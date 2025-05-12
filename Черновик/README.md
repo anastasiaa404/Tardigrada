@@ -167,11 +167,11 @@ NODE_3395 | (высокий % id) | Скорее всего тихоходка
 #### 6.3.2. Дерево по ортологам
 - запустить буско на всех бинах
 - начнем с **аминокислотных (белковых) последовательностей**
-- копируем все ортологи в одну папку:
+##### 6.3.2.1 копируем все ортологи в одну папку:
 ```
 mkdir -p /mnt/projects/aanferova/tardigrada/tardigrada_busco_aa
 
-# Копируем аминокислотные последовательности из всех BUSCO-папок в целевую директорию
+# Копируем аминокислотные последовательности из всех BUSCO-папок в целевую директорию **(эта команда для OOM, также потом сделала для API)**
 for dir in /media/eternus1/nfs/projects/users/mrayko/microsporidia/OOM/maxbin2/busco_metaeuk_maxbin_real.00*_eukaryota; do
     if compgen -G "$dir/run_eukaryota_odb10/busco_sequences/single_copy_busco_sequences/*.faa" > /dev/null; then
         cp "$dir"/run_eukaryota_odb10/busco_sequences/single_copy_busco_sequences/*.faa /mnt/projects/aanferova/tardigrada/tardigrada_busco_aa/
@@ -212,3 +212,71 @@ mv *.fasta ../orthologs_ready/
 | Выравнивание    | MAFFT                 |
 | Конкатенация    | AMAS / FASconCAT-G    |
 | Филогения       | IQ-TREE               |
+
+##### 6.3.2.1 
+- Выравнивание
+```
+mkdir -p /mnt/projects/aanferova/tardigrada/orthologs_aligned
+
+for f in /mnt/projects/aanferova/tardigrada/orthologs_ready/*.fasta; do
+    base=$(basename "$f" .fasta)
+    mafft --auto "$f" > /mnt/projects/aanferova/tardigrada/orthologs_aligned/${base}_aligned.fasta
+done
+```
+- Очистка выравниваний
+Рекомендуется очистить выравнивания от лишних участков с помощью trimal (предложил чат):
+```
+mkdir -p /mnt/projects/aanferova/tardigrada/orthologs_trimmed
+
+for f in /mnt/projects/aanferova/tardigrada/orthologs_aligned/*_aligned.fasta; do
+    base=$(basename "$f" _aligned.fasta)
+    trimal -in "$f" -out /mnt/projects/aanferova/tardigrada/orthologs_trimmed/${base}_trimmed.fasta -automated1
+done
+```
+
+- Конкатенация
+- Нужно объединить все очищенные выравнивания в один суперматрицный файл для построения дерева.
+- **Вариант 1:** Объединение вручную через cat 
+```
+mkdir -p /mnt/projects/aanferova/tardigrada/concatenated
+
+# Файл с финальным супервыравниванием
+output=/mnt/projects/aanferova/tardigrada/concatenated/supermatrix.fasta
+
+# Очистим если уже есть
+rm -f "$output"
+
+# Получим список таксонов (предполагаем, что они одинаковы во всех файлах)
+head -n 1 /mnt/projects/aanferova/tardigrada/orthologs_trimmed/*.fasta | grep ">" | sed 's/>//' > taxon_list.txt
+
+# Создаем пустые строки для всех таксонов
+while read taxon; do
+    echo ">$taxon" >> "$output"
+    echo "" >> "$output"
+done < taxon_list.txt
+
+# Теперь склеим все последовательности по таксонам
+for f in /mnt/projects/aanferova/tardigrada/orthologs_trimmed/*_trimmed.fasta; do
+    awk '/^>/{name=$0; next} {print name"\t"$0}' "$f" >> temp.tsv
+done
+
+# Объединение по таксонам
+for taxon in $(cat taxon_list.txt); do
+    seq=$(grep -P "^>$taxon\t" temp.tsv | cut -f2 | tr -d '\n')
+    sed -i "/^>$taxon/{n;s/.*/$seq/}" "$output"
+done
+
+rm temp.tsv taxon_list.txt
+```
+- **Вариант 2:** через AMAS (конечно, он тоже не с первого раза установился, его установка будет в другом лабжурнале)
+```
+python3 /media/eternus1/nfs/projects/users/aanferova/miniconda3/lib/python3.11/site-packages/amas/AMAS.py concat \
+  -i /mnt/projects/aanferova/tardigrada/orthologs_trimmed/*_trimmed.fasta \
+  -f fasta -d aa \
+  -t concatenated_alignment.fasta \
+  -p partition.txt
+``` 
+- Дерево (в процессе)
+```
+iqtree2 -s concatenated_alignment.fasta -p partition.txt -m MFP+MERGE -B 1000 -alrt 1000 -nt AUTO
+```
