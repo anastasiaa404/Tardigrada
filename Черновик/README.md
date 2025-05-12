@@ -114,12 +114,19 @@ barrnap  scaffolds.fasta   --outseq rrna.fasta
 
 ## 5.Запускали срипт Миши, буско и биннинг (maxbin)
 
+- Результаты тут:
+```
+/media/eternus1/nfs/projects/users/mrayko/microsporidia/OOM/maxbin2
+/media/eternus1/nfs/projects/users/mrayko/microsporidia/API1/maxbin2
+/media/eternus1/nfs/projects/users/mrayko/microsporidia/API2/maxbin2
+```
+
 ## 6. Строим деревья:
 1. Что конкретно надо сделать пошагово:
 2. Пробежать barrnap по всем файлам maxbin_real.00*.fasta, чтобы вытащить 18S рРНК.
 3.  Посмотреть, что нашлось — может быть, у некоторых бинов будет 18S, у некоторых нет.
 4. Собрать найденные 18S в один fasta-файл.
-5. Сделать BLAST этих последовательностей против базы nt или silva, чтобы понять, кто это.
+5. Сделать BLAST этих последовательностей 
 6. (Опционально) Построить филогенетическое дерево через IQ-TREE.
 
 ### 6.1. Достаем 18S:
